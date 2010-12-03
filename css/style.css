@@ -1,0 +1,42 @@
+
+body {
+    background-color: #222;
+}
+
+#playground {
+    border: 2px solid #3E3E3E;
+}
+
+.debugShape {
+    color: white;
+    font-size: 0.5em;
+    font-family: monospace;
+    text-align: center;
+}
+
+.tile {
+    /*border: 1px dotted rgba(255,0,0,0.2);*/
+}
+
+
+.tile p {
+    text-align: center;
+    color: black;
+    opacity: 0.1;
+    line-height: 128px;
+    margin-top: 32px;
+    font-size: 1.1em;
+    font-family: monospace;
+    font-weight: bold;
+
+    -webkit-transform: skewX(-50deg) skewY(18deg) scaleX(1.5);
+    -moz-transform: skewX(-50deg) skewY(18deg) scaleX(1.5);
+
+    text-shadow: -1px -1px 1px white;
+}
+
+.tileB p {
+    margin-top: -32px;
+    color: black;
+}
+
