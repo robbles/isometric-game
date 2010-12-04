@@ -7,6 +7,12 @@ body {
     border: 2px solid #3E3E3E;
 }
 
+#dude {
+    -webkit-transition-property: left, top;
+    -webkit-transition-duration: 0.5s, 0.5s;
+    -webkit-transition-timing-function: ease;
+}
+
 .debugShape {
     color: white;
     font-size: 0.5em;
@@ -28,11 +34,11 @@ body {
     font-family: monospace;
     font-weight: bold;
 
-    -webkit-transform: skewX(-62deg) skewY(13deg) scaleX(1.8);
+    -webkit-transform: skewX(-62deg) skewY(13deg) scaleX(1.8) scaleY(0.7);
     -moz-transform: skewX(-62deg) skewY(13deg) scaleX(1.8);
 
     text-shadow: -1px -1px 1px white;
-    opacity: 0.1;
+    opacity: 0.2;
 }
 
 
