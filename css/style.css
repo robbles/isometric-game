@@ -1,0 +1,52 @@
+
+body {
+    background-color: #222;
+}
+
+#playground {
+    border: 2px solid #3E3E3E;
+}
+
+#dude, #dude-before, #dude-after {
+    -webkit-transition-property: left, top;
+    -webkit-transition-duration: 0.2s, 0.2s;
+    -webkit-transition-timing-function: linear;
+    -moz-transition-property: left, top;
+    -moz-transition-duration: 0.2s, 0.2s;
+    -moz-transition-timing-function: linear;
+}
+
+.debugShape {
+    color: white;
+    font-size: 0.5em;
+    font-family: monospace;
+    text-align: center;
+}
+
+.tile {
+    /*border: 1px dotted rgba(255,0,0,0.2);*/
+}
+
+
+.tile p {
+    text-align: center;
+    color: black;
+    line-height: 128px;
+    margin-top: 32px;
+    font-size: 1.1em;
+    font-family: monospace;
+    font-weight: bold;
+
+    -webkit-transform: skewX(-62deg) skewY(13deg) scaleX(1.8) scaleY(0.7);
+    -moz-transform: skewX(-62deg) skewY(13deg) scaleX(1.8) scaleY(0.7);
+
+    text-shadow: -1px -1px 1px white;
+    opacity: 0.2;
+}
+
+
+.tileB p {
+    margin-top: -32px;
+    color: black;
+}
+
