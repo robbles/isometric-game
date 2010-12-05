@@ -7,10 +7,13 @@ body {
     border: 2px solid #3E3E3E;
 }
 
-#dude {
+#dude, #dude-before, #dude-after {
     -webkit-transition-property: left, top;
-    -webkit-transition-duration: 0.5s, 0.5s;
-    -webkit-transition-timing-function: ease;
+    -webkit-transition-duration: 0.2s, 0.2s;
+    -webkit-transition-timing-function: linear;
+    -moz-transition-property: left, top;
+    -moz-transition-duration: 0.2s, 0.2s;
+    -moz-transition-timing-function: linear;
 }
 
 .debugShape {
@@ -35,7 +38,7 @@ body {
     font-weight: bold;
 
     -webkit-transform: skewX(-62deg) skewY(13deg) scaleX(1.8) scaleY(0.7);
-    -moz-transform: skewX(-62deg) skewY(13deg) scaleX(1.8);
+    -moz-transform: skewX(-62deg) skewY(13deg) scaleX(1.8) scaleY(0.7);
 
     text-shadow: -1px -1px 1px white;
     opacity: 0.2;

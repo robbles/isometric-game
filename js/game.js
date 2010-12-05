@@ -30,28 +30,38 @@ var SPRITES = {
     'D': new $.gameQuery.Animation({
         imageURL: 'images/basic_door128.png',
     }),
-    'R': new $.gameQuery.Animation({
-        imageURL: 'images/dude.gif',
+    'PlayerUp': new $.gameQuery.Animation({
+        imageURL: 'images/dude_flipped.png',
+    }),
+    'PlayerLeft': new $.gameQuery.Animation({
+        imageURL: 'images/dude.png',
+    }),
+    'PlayerDown': new $.gameQuery.Animation({
+        imageURL: 'images/dude_flipped.png',
+    }),
+    'PlayerRight': new $.gameQuery.Animation({
+        imageURL: 'images/dude.png',
     }),
 };
 
 // Sector tile data
+// TODO: turn this into a map of { x,y => [tile, objects...] }
 var TILES = [
     // Floors and walls
-    {x:0,y:0,s:'B'},{x:0,y:1,s:'B'},{x:0,y:2,s:'B'},{x:0,y:3,s:'B'},{x:0,y:4,s:'B'},{x:0,y:5,s:'B'},{x:0,y:6,s:'B'},{x:0,y:7,s:'B'},{x:0,y:8,s:'B'},{x:0,y:9,s:'B'},
-    {x:1,y:0,s:'B'},{x:1,y:1,s:'B'},{x:1,y:2,s:'F'},{x:1,y:3,s:'F'},{x:1,y:4,s:'F'},{x:1,y:5,s:'F'},{x:1,y:6,s:'F'},{x:1,y:7,s:'F'},{x:1,y:8,s:'F'},{x:1,y:9,s:'B'},
-    {x:2,y:0,s:'B'},{x:2,y:1,s:'B'},{x:2,y:2,s:'F'},{x:2,y:3,s:'F'},{x:2,y:4,s:'F'},{x:2,y:5,s:'F'},{x:2,y:6,s:'F'},{x:2,y:7,s:'F'},{x:2,y:8,s:'F'},{x:2,y:9,s:'B'},
-    {x:3,y:0,s:'B'},{x:3,y:1,s:'B'},{x:3,y:2,s:'B'},{x:3,y:3,s:'F'},{x:3,y:4,s:'F'},{x:3,y:5,s:'F'},{x:3,y:6,s:'F'},{x:3,y:7,s:'F'},{x:3,y:8,s:'F'},{x:3,y:9,s:'B'},
-    {x:4,y:0,s:'B'},{x:4,y:1,s:'F'},{x:4,y:2,s:'B'},{x:4,y:3,s:'B'},{x:4,y:4,s:'B'},{x:4,y:5,s:'F'},{x:4,y:6,s:'F'},{x:4,y:7,s:'F'},{x:4,y:8,s:'F'},{x:4,y:9,s:'F'},
-    {x:5,y:0,s:'B'},{x:5,y:1,s:'F'},{x:5,y:2,s:'F'},{x:5,y:3,s:'B'},{x:5,y:4,s:'B'},{x:5,y:5,s:'F'},{x:5,y:6,s:'F'},{x:5,y:7,s:'F'},{x:5,y:8,s:'F'},{x:5,y:9,s:'F'},
-    {x:6,y:0,s:'B'},{x:6,y:1,s:'F'},{x:6,y:2,s:'F'},{x:6,y:3,s:'F'},{x:6,y:4,s:'F'},{x:6,y:5,s:'F'},{x:6,y:6,s:'F'},{x:6,y:7,s:'F'},{x:6,y:8,s:'F'},{x:6,y:9,s:'B'},
-    {x:7,y:0,s:'B'},{x:7,y:1,s:'F'},{x:7,y:2,s:'F'},{x:7,y:3,s:'F'},{x:7,y:4,s:'F'},{x:7,y:5,s:'F'},{x:7,y:6,s:'F'},{x:7,y:7,s:'F'},{x:7,y:8,s:'F'},{x:7,y:9,s:'B'},
-    {x:8,y:0,s:'B'},{x:8,y:1,s:'F'},{x:8,y:2,s:'F'},{x:8,y:3,s:'F'},{x:8,y:4,s:'F'},{x:8,y:5,s:'F'},{x:8,y:6,s:'F'},{x:8,y:7,s:'F'},{x:8,y:8,s:'F'},{x:8,y:9,s:'B'},
-    {x:9,y:0,s:'B'},{x:9,y:1,s:'B'},{x:9,y:2,s:'B'},{x:9,y:3,s:'B'},{x:9,y:4,s:'B'},{x:9,y:5,s:'F'},{x:9,y:6,s:'F'},{x:9,y:7,s:'B'},{x:9,y:8,s:'B'},{x:9,y:9,s:'B'},
+    {x:0,y:0,h:1,s:'B'},{x:0,y:1,h:1,s:'B'},{x:0,y:2,h:1,s:'B'},{x:0,y:3,h:1,s:'B'},{x:0,y:4,h:1,s:'B'},{x:0,y:5,h:1,s:'B'},{x:0,y:6,h:1,s:'B'},{x:0,y:7,h:1,s:'B'},{x:0,y:8,h:1,s:'B'},{x:0,y:9,h:1,s:'B'},
+    {x:1,y:0,h:1,s:'B'},{x:1,y:1,h:1,s:'B'},{x:1,y:2,h:0,s:'F'},{x:1,y:3,h:0,s:'F'},{x:1,y:4,h:0,s:'F'},{x:1,y:5,h:0,s:'F'},{x:1,y:6,h:0,s:'F'},{x:1,y:7,h:0,s:'F'},{x:1,y:8,h:0,s:'F'},{x:1,y:9,h:1,s:'B'},
+    {x:2,y:0,h:1,s:'B'},{x:2,y:1,h:1,s:'B'},{x:2,y:2,h:0,s:'F'},{x:2,y:3,h:0,s:'F'},{x:2,y:4,h:0,s:'F'},{x:2,y:5,h:0,s:'F'},{x:2,y:6,h:0,s:'F'},{x:2,y:7,h:0,s:'F'},{x:2,y:8,h:0,s:'F'},{x:2,y:9,h:1,s:'B'},
+    {x:3,y:0,h:1,s:'B'},{x:3,y:1,h:1,s:'B'},{x:3,y:2,h:1,s:'B'},{x:3,y:3,h:0,s:'F'},{x:3,y:4,h:0,s:'F'},{x:3,y:5,h:0,s:'F'},{x:3,y:6,h:0,s:'F'},{x:3,y:7,h:0,s:'F'},{x:3,y:8,h:0,s:'F'},{x:3,y:9,h:1,s:'B'},
+    {x:4,y:0,h:1,s:'B'},{x:4,y:1,h:0,s:'F'},{x:4,y:2,h:1,s:'B'},{x:4,y:3,h:1,s:'B'},{x:4,y:4,h:1,s:'B'},{x:4,y:5,h:0,s:'F'},{x:4,y:6,h:0,s:'F'},{x:4,y:7,h:0,s:'F'},{x:4,y:8,h:0,s:'F'},{x:4,y:9,h:1,s:'F'},
+    {x:5,y:0,h:1,s:'B'},{x:5,y:1,h:0,s:'F'},{x:5,y:2,h:0,s:'F'},{x:5,y:3,h:1,s:'B'},{x:5,y:4,h:1,s:'B'},{x:5,y:5,h:0,s:'F'},{x:5,y:6,h:0,s:'F'},{x:5,y:7,h:0,s:'F'},{x:5,y:8,h:0,s:'F'},{x:5,y:9,h:1,s:'F'},
+    {x:6,y:0,h:1,s:'B'},{x:6,y:1,h:0,s:'F'},{x:6,y:2,h:0,s:'F'},{x:6,y:3,h:0,s:'F'},{x:6,y:4,h:0,s:'F'},{x:6,y:5,h:0,s:'F'},{x:6,y:6,h:0,s:'F'},{x:6,y:7,h:0,s:'F'},{x:6,y:8,h:0,s:'F'},{x:6,y:9,h:1,s:'B'},
+    {x:7,y:0,h:1,s:'B'},{x:7,y:1,h:0,s:'F'},{x:7,y:2,h:0,s:'F'},{x:7,y:3,h:0,s:'F'},{x:7,y:4,h:0,s:'F'},{x:7,y:5,h:0,s:'F'},{x:7,y:6,h:0,s:'F'},{x:7,y:7,h:0,s:'F'},{x:7,y:8,h:0,s:'F'},{x:7,y:9,h:1,s:'B'},
+    {x:8,y:0,h:1,s:'B'},{x:8,y:1,h:0,s:'F'},{x:8,y:2,h:0,s:'F'},{x:8,y:3,h:0,s:'F'},{x:8,y:4,h:0,s:'F'},{x:8,y:5,h:0,s:'F'},{x:8,y:6,h:0,s:'F'},{x:8,y:7,h:0,s:'F'},{x:8,y:8,h:0,s:'F'},{x:8,y:9,h:1,s:'B'},
+    {x:9,y:0,h:1,s:'B'},{x:9,y:1,h:1,s:'B'},{x:9,y:2,h:1,s:'B'},{x:9,y:3,h:1,s:'B'},{x:9,y:4,h:1,s:'B'},{x:9,y:5,h:0,s:'F'},{x:9,y:6,h:0,s:'F'},{x:9,y:7,h:1,s:'B'},{x:9,y:8,h:1,s:'B'},{x:9,y:9,h:1,s:'B'},
 
     // Doors and items
-    {x:4,y:9,z:1,s:'D'},
-    {x:5,y:9,z:1,s:'D'},
+    {x:4,y:9,z:1,h:1,s:'D'},
+    {x:5,y:9,z:1,h:1,s:'D'},
 ];
 
 // Current sector, stores map of tiles and their locations
@@ -72,8 +82,11 @@ var PLAYER = {
     sector: 0,
     x: 5,
     y: 5,
-    sprite: 'R',
+    sprite: SPRITES['PlayerRight'],
     status: Motion.PLACED,
+    $: null,
+    before: null,
+    after: null,
 };
 
 $(document).ready(function() {
@@ -89,35 +102,64 @@ $(document).ready(function() {
     buildSector("#floor", sector);
 
     // Place the player
-    console.log('adding the dude to game');
+    var playerTile = SECTOR[tileName(sector, PLAYER.x, PLAYER.y)];
+
     $.playground().addSprite('dude', {
-        animation: SPRITES[PLAYER.sprite],
+        animation: PLAYER.sprite,
         width: SPRITE_WIDTH, 
         height: SPRITE_HEIGHT,
+        posx: playerTile.x,
+        posy: playerTile.y - (SECTOR_ROWS * ISO_TILE_HEIGHT),
     });
+    $.playground().addSprite('dude-before', {
+        animation: PLAYER.sprite,
+        width: SPRITE_WIDTH, 
+        height: SPRITE_HEIGHT,
+        posx: 0, posy: 0,
+    });
+    $.playground().addSprite('dude-after', {
+        animation: PLAYER.sprite,
+        width: SPRITE_WIDTH, 
+        height: SPRITE_HEIGHT,
+        posx: 0, posy: 0,
+    });
+    PLAYER.$ = $('#dude');
+    PLAYER.before = $('#dude-before').detach();
+    PLAYER.after = $('#dude-after').detach();
 
     // Position the player
     positionPlayer(sector);
 
     $(document).keydown(function(event) {
+        // Prevent scrolling from arrow keys
+        if(isMovementKey(event.which)) {
+            event.preventDefault();
+        }
+
+        // Only trigger movement when stationary or finished moving
+        if(PLAYER.status != Motion.STATIONERY) {
+            return;
+        }
+
+        // Check for arrow keys / WASD
         switch(event.which) {
             // UP
-            case 'w':
+            case 87:
             case 38:
             PLAYER.status = Motion.MOVING_UP;
             break;
             // LEFT
-            case 'a':
+            case 65:
             case 37:
             PLAYER.status = Motion.MOVING_LEFT;
             break;
             // DOWN
-            case 's':
+            case 83:
             case 40:
             PLAYER.status = Motion.MOVING_DOWN;
             break;
             // RIGHT
-            case 'd':
+            case 68:
             case 39:
             PLAYER.status = Motion.MOVING_RIGHT;
             break;
@@ -126,12 +168,11 @@ $(document).ready(function() {
             // Leave unknown keyboard events alone
             return;
         }
-        console.log('keypress: player status = ' + PLAYER.status);
         // If default wasn't hit (known event), cancel the event
         event.preventDefault();
 
-        // Asynchronously reposition player
-        setTimeout(positionPlayer, 0);
+        // reposition player
+        positionPlayer();
     });
 
     // Start the game!
@@ -142,31 +183,54 @@ $(document).ready(function() {
 
 var positionPlayer = function() {
 
-    // TODO: look up floor tile for collisions
+    var currentTile = SECTOR[tileName(sector, PLAYER.x, PLAYER.y)];
 
     var playerMoved = true;
+    var goalX = PLAYER.x;
+    var goalY = PLAYER.y;
+
     switch(PLAYER.status) {
         case Motion.PLACED:
-        console.log ('just placed!');
+        PLAYER.status = Motion.STATIONERY;
         break;
 
         case Motion.MOVING_UP:
-        PLAYER.y -= (PLAYER.y > 0 && canMoveTo(PLAYER.x, PLAYER.y-1))? 1: 0;
+        goalY--;
+        PLAYER.sprite = SPRITES['PlayerUp']
         break;
 
         case Motion.MOVING_LEFT:
-        PLAYER.x += (PLAYER.x > 0 && canMoveTo(PLAYER.x+1, PLAYER.y))? 1: 0;
+        goalX++;
+        PLAYER.sprite = SPRITES['PlayerLeft']
         break;
 
         case Motion.MOVING_DOWN:
-        PLAYER.y += (PLAYER.y < SECTOR_ROWS && canMoveTo(PLAYER.x, PLAYER.y+1))? 1: 0;
+        goalY++;
+        PLAYER.sprite = SPRITES['PlayerDown']
         break;
 
         case Motion.MOVING_RIGHT:
-        PLAYER.x -= (PLAYER.x < SECTOR_COLS && canMoveTo(PLAYER.x-1, PLAYER.y))? 1: 0;
+        goalX--;
+        PLAYER.sprite = SPRITES['PlayerRight']
         break;
 
         default: playerMoved = false;
+    }
+
+    // Update player animation
+    PLAYER.$.setAnimation(PLAYER.sprite);
+    PLAYER.before.setAnimation(PLAYER.sprite);
+    PLAYER.after.setAnimation(PLAYER.sprite);
+
+    if(canMoveTo(goalX, goalY)) {
+        // Move is valid, proceed
+        PLAYER.x = goalX;
+        PLAYER.y = goalY;
+    } else {
+        // Can't move that way - cancel movement
+        console.log('blocked!');
+        PLAYER.status = Motion.STATIONERY;
+        return;
     }
 
     if(!playerMoved) {
@@ -174,15 +238,57 @@ var positionPlayer = function() {
         return;
     }
 
-    console.log('player is at ' + PLAYER.x + ',' + PLAYER.y);
 
-    var playerTile = SECTOR[tileName(sector, PLAYER.x, PLAYER.y)];
-    console.log('moving dude to ' + playerTile.x + ',' + playerTile.y);
-    $('#dude').css({
-        'left': playerTile.x,
-        'top': playerTile.y,
-        'z-index': isoDepth(PLAYER.x, PLAYER.y),
+    var goalTile = SECTOR[tileName(sector, PLAYER.x, PLAYER.y)];
+
+    // Place before/after copies of player in each tile
+    PLAYER.before.appendTo(currentTile.$)
+    .css({
+        'left': 0,
+        'top': 0,
     });
+    PLAYER.after.appendTo(goalTile.$)
+    .css({
+        'left': currentTile.x - goalTile.x,
+        'top': currentTile.y - goalTile.y,
+    });
+
+    // Slide each toward final location
+    setTimeout(function() {
+        PLAYER.before.css({
+            'left': goalTile.x - currentTile.x,
+            'top': goalTile.y - currentTile.y,
+        });
+        PLAYER.after.css({
+            'left': 0,
+            'top': 0,
+        });
+    }, 0);
+
+    // Move player, adjust z-index to final value and hide
+    PLAYER.$.css({
+        'left': goalTile.x,
+        'top': goalTile.y,
+        'z-index': isoDepth(PLAYER.x, PLAYER.y),
+        'opacity': 0,
+    }).bind('webkitTransitionEnd mozTransitionEnd transitionend', function(event) {
+        // After transition is done, take out copies
+        PLAYER.before.detach();
+        PLAYER.after.detach();
+        // Unbind event
+        $(this).unbind('webkitTransitionEnd mozTransitionEnd transitionend')
+        // Show the real player again
+        .css({
+            'opacity': 1,
+        });
+        PLAYER.status = Motion.STATIONERY;
+    });
+
+    // Experimental: allow next movement earlier with timeout
+    setTimeout(function() {
+        PLAYER.status = Motion.STATIONERY;
+    }, 150);
+
 }
 
 var buildSector = function(parent, sector) {
@@ -207,8 +313,8 @@ var buildSector = function(parent, sector) {
             x: iso.x,
             y: iso.y,
             sprite: sprite,
-            selector: selector,
-            floor: (tile.s == 'F'),
+            $: selector,
+            floor: (tile.h == 0),
         };
 
         var depth = isoDepth(tile.x, tile.y);
@@ -224,6 +330,12 @@ var buildSector = function(parent, sector) {
 };
 
 var canMoveTo = function(x, y) {
+    if(x < 0 || y < 0) {
+        return false;
+    }
+    if(x >= SECTOR_COLS || y >= SECTOR_ROWS) {
+        return false;
+    }
     name = tileName(PLAYER.sector, x, y);
     block = SECTOR[name];
     return block.floor;
@@ -277,6 +389,19 @@ var tileName = function(sector, x, y, z) {
  */
 var isoDepth = function(x, y) {
     return x + (SECTOR_COLS * y);
+}
+
+/*
+ *Check if the given key is in WASD or arrow keys
+ */
+var isMovementKey = function(key) {
+    var found = false;
+    [87, 38, 65, 37, 83, 40, 68, 39].forEach(function(knownKey) {
+        if(key == knownKey) {
+            found = true;
+        }
+    });
+    return found;
 }
 
 /*
