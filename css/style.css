@@ -8,12 +8,19 @@ body {
 }
 
 #dude, #dude-before, #dude-after {
+    /*
     -webkit-transition-property: left, top;
     -webkit-transition-duration: 0.2s, 0.2s;
     -webkit-transition-timing-function: linear;
     -moz-transition-property: left, top;
     -moz-transition-duration: 0.2s, 0.2s;
     -moz-transition-timing-function: linear;
+    */
+}
+
+#effects canvas {
+    width: 100%;
+    height: 100%;
 }
 
 .debugShape {

@@ -1,4 +1,4 @@
-var DEBUG = false;
+var DEBUG = true;
 
 // Dimensions of a tile sprite
 var SPRITE_WIDTH = 128;
@@ -70,11 +70,12 @@ var SECTOR = {};
 // Current attempted motion by the player
 var Motion = {
     PLACED: 'Placed',
-    STATIONERY: 'Stationery',
+    STATIONARY: 'Stationery',
     MOVING_UP: 'Moving up',
     MOVING_RIGHT: 'Moving right',
     MOVING_DOWN: 'Moving down',
     MOVING_LEFT: 'Moving left',
+    FOLLOWING_PATH: 'Following a path',
 };
 
 // Stores current player position and status
@@ -84,10 +85,14 @@ var PLAYER = {
     y: 5,
     sprite: SPRITES['PlayerRight'],
     status: Motion.PLACED,
+    path: null,
+    speed: 150,
     $: null,
     before: null,
     after: null,
 };
+
+var effects = null;
 
 $(document).ready(function() {
 
@@ -95,7 +100,19 @@ $(document).ready(function() {
     $("#playground").playground({height: PLAYGROUND_HEIGHT, width: PLAYGROUND_WIDTH})
     .addGroup("underneath", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT}).end()
     .addGroup("floor", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT}).end()
+    .addGroup("objects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT}).end()
+    .addGroup("effects", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT}).end()
+    .addGroup("targets", {width: PLAYGROUND_WIDTH, height: PLAYGROUND_HEIGHT}).end()
     ;
+  
+    $('#underneath').css('z-index', -1);
+    $('#floor').css('z-index', 0);
+    $('#objects').css('z-index', 1);
+    $('#effects').css('z-index', 2);
+    $('#targets').css('z-index', 3);
+
+    $('#effects').html('<canvas width="' + PLAYGROUND_WIDTH + '" height="' + PLAYGROUND_HEIGHT + '"></canvas>');
+    effects = $('#effects canvas').get(0).getContext('2d');
 
     // Build the current sector
     sector = PLAYER.sector;
@@ -104,20 +121,20 @@ $(document).ready(function() {
     // Place the player
     var playerTile = SECTOR[tileName(sector, PLAYER.x, PLAYER.y)];
 
-    $.playground().addSprite('dude', {
+    $('#floor').addSprite('dude', {
         animation: PLAYER.sprite,
         width: SPRITE_WIDTH, 
         height: SPRITE_HEIGHT,
         posx: playerTile.x,
         posy: playerTile.y - (SECTOR_ROWS * ISO_TILE_HEIGHT),
     });
-    $.playground().addSprite('dude-before', {
+    $('#floor').addSprite('dude-before', {
         animation: PLAYER.sprite,
         width: SPRITE_WIDTH, 
         height: SPRITE_HEIGHT,
         posx: 0, posy: 0,
     });
-    $.playground().addSprite('dude-after', {
+    $('#floor').addSprite('dude-after', {
         animation: PLAYER.sprite,
         width: SPRITE_WIDTH, 
         height: SPRITE_HEIGHT,
@@ -137,29 +154,25 @@ $(document).ready(function() {
         }
 
         // Only trigger movement when stationary or finished moving
-        if(PLAYER.status != Motion.STATIONERY) {
+        if(PLAYER.status != Motion.STATIONARY) {
             return;
         }
 
-        // Check for arrow keys / WASD
+        // Check for arrow keys
         switch(event.which) {
             // UP
-            case 87:
             case 38:
             PLAYER.status = Motion.MOVING_UP;
             break;
             // LEFT
-            case 65:
             case 37:
             PLAYER.status = Motion.MOVING_LEFT;
             break;
             // DOWN
-            case 83:
             case 40:
             PLAYER.status = Motion.MOVING_DOWN;
             break;
             // RIGHT
-            case 68:
             case 39:
             PLAYER.status = Motion.MOVING_RIGHT;
             break;
@@ -177,7 +190,7 @@ $(document).ready(function() {
 
     // Start the game!
     $.playground().startGame(function() {
-        console.log('game started!');
+        console.log('game started yeaaaaaaah!');
     });
 });
 
@@ -191,7 +204,7 @@ var positionPlayer = function() {
 
     switch(PLAYER.status) {
         case Motion.PLACED:
-        PLAYER.status = Motion.STATIONERY;
+        PLAYER.status = Motion.STATIONARY;
         break;
 
         case Motion.MOVING_UP:
@@ -214,6 +227,25 @@ var positionPlayer = function() {
         PLAYER.sprite = SPRITES['PlayerRight']
         break;
 
+        case Motion.FOLLOWING_PATH:
+        var node = PLAYER.path.nodes.shift();
+        if(node === null || typeof(node) === 'undefined') {
+            PLAYER.status = Motion.STATIONARY;
+            effects.clearRect(0, 0, PLAYGROUND_WIDTH, PLAYGROUND_HEIGHT);
+            console.log('done path!');
+        } else {
+            goalX = node.x;
+            goalY = node.y;
+            console.log('next point on path: ' + goalX + ',' + goalY);
+        }
+        if(goalX != PLAYER.x) {
+            PLAYER.sprite = SPRITES['PlayerRight']
+        }
+        if(goalY != PLAYER.y) {
+            PLAYER.sprite = SPRITES['PlayerUp']
+        }
+        break;
+
         default: playerMoved = false;
     }
 
@@ -229,7 +261,7 @@ var positionPlayer = function() {
     } else {
         // Can't move that way - cancel movement
         console.log('blocked!');
-        PLAYER.status = Motion.STATIONERY;
+        PLAYER.status = Motion.STATIONARY;
         return;
     }
 
@@ -238,32 +270,27 @@ var positionPlayer = function() {
         return;
     }
 
-
     var goalTile = SECTOR[tileName(sector, PLAYER.x, PLAYER.y)];
+    var slideTime = PLAYER.speed;
 
     // Place before/after copies of player in each tile
     PLAYER.before.appendTo(currentTile.$)
     .css({
         'left': 0,
         'top': 0,
-    });
+    }).animate({
+        'left': goalTile.x - currentTile.x,
+        'top': goalTile.y - currentTile.y,
+    }, slideTime);
+
     PLAYER.after.appendTo(goalTile.$)
     .css({
         'left': currentTile.x - goalTile.x,
         'top': currentTile.y - goalTile.y,
-    });
-
-    // Slide each toward final location
-    setTimeout(function() {
-        PLAYER.before.css({
-            'left': goalTile.x - currentTile.x,
-            'top': goalTile.y - currentTile.y,
-        });
-        PLAYER.after.css({
-            'left': 0,
-            'top': 0,
-        });
-    }, 0);
+    }).animate({
+        'left': 0,
+        'top': 0,
+    }, slideTime);
 
     // Move player, adjust z-index to final value and hide
     PLAYER.$.css({
@@ -271,24 +298,23 @@ var positionPlayer = function() {
         'top': goalTile.y,
         'z-index': isoDepth(PLAYER.x, PLAYER.y),
         'opacity': 0,
-    }).bind('webkitTransitionEnd mozTransitionEnd transitionend', function(event) {
+    });
+
+    setTimeout(function() {
         // After transition is done, take out copies
         PLAYER.before.detach();
         PLAYER.after.detach();
-        // Unbind event
-        $(this).unbind('webkitTransitionEnd mozTransitionEnd transitionend')
         // Show the real player again
-        .css({
+        PLAYER.$.css({
             'opacity': 1,
         });
-        PLAYER.status = Motion.STATIONERY;
-    });
-
-    // Experimental: allow next movement earlier with timeout
-    setTimeout(function() {
-        PLAYER.status = Motion.STATIONERY;
-    }, 150);
-
+        if(PLAYER.status != Motion.FOLLOWING_PATH) {
+            PLAYER.status = Motion.STATIONARY;
+        } else {
+            setTimeout(positionPlayer, 100);
+        }
+            
+    }, slideTime);
 }
 
 var buildSector = function(parent, sector) {
@@ -305,11 +331,48 @@ var buildSector = function(parent, sector) {
             posy: iso.y,
         });
 
+        if(sprite === SPRITES['F']) {
+            $('#targets').addSprite(name + "-target", {
+                width: SPRITE_WIDTH, 
+                height: SPRITE_HEIGHT/2,
+                posx: iso.x,
+                posy: iso.y + SPRITE_HEIGHT/2,
+            }).children('#' + name + '-target')
+            .attr('rel', name)
+            .bind('click touchstart', function(event) {
+                console.log('clicked on ' + $(this).attr('id'));
+                console.log(event.pageX, event.pageY);
+
+                // Skip if outside box
+                var target = $(this);
+                var offset = target.offset();
+                if(!isInsideIsoBox(event.pageX, event.pageY, offset.left, offset.top, SPRITE_WIDTH, SPRITE_HEIGHT/2)) {
+                    console.log('Not in iso box!');
+
+                    // Delegate click to the right element
+                    target = $(this).siblings().filter(function() {
+                        var offset = $(this).offset();
+                        return isInsideIsoBox(event.pageX, event.pageY, offset.left, offset.top, SPRITE_WIDTH, SPRITE_HEIGHT/2);
+                    }).eq(0);
+
+                    console.log('actually clicked on ' + target.attr('id'));
+                }
+
+                drawPath(target);
+
+                event.preventDefault();
+                return false;
+            });
+        }
+
+
         // Cache jQuery selector to avoid looking it up again
         var selector = $('#' + name);
 
         // Store block info in current sector metadata
         SECTOR[name] = {
+            xi: tile.x,
+            yi: tile.y,
             x: iso.x,
             y: iso.y,
             sprite: sprite,
@@ -323,10 +386,48 @@ var buildSector = function(parent, sector) {
         // Debugging overlay
         if(DEBUG) {
             selector.addClass('tile').addClass('tile' + tile.s)
-            .html('<p>' + tile.x + ',' + tile.y + ',' + depth + '</p>');
+            .html('<p>' + tile.x + ',' + tile.y + '</p>');
         }
 
     });
+};
+
+var drawPath = function(target) {
+    var graph = new crow.Graph();
+
+    $.each(SECTOR, function(tileName) {
+        var tile = SECTOR[tileName];
+        if(tile.floor) {
+            graph.addNode(new crow.GridNode([tile.xi, tile.yi]));
+        }
+    });
+
+    var targetInfo = SECTOR[target.attr('rel')];
+
+    var path = graph.findGoal({
+        start: graph.getNode(PLAYER.x, PLAYER.y), 
+        goal: graph.getNode(targetInfo.xi, targetInfo.yi)
+    });
+    console.log(path);
+
+    effects.clearRect(0, 0, PLAYGROUND_WIDTH, PLAYGROUND_HEIGHT);
+
+    effects.strokeStyle = 'rgba(0,100,255,0.2)';
+    effects.lineWidth = 8;
+    effects.lineCap = 'round';
+    effects.beginPath();
+    var node = path.start;
+    var tile = SECTOR[tileName(PLAYER.sector, node.x, node.y)];
+    effects.moveTo(tile.x + SPRITE_WIDTH/2, tile.y + SPRITE_HEIGHT*3/4);
+    $.each(path.nodes, function(index) {
+        tile = SECTOR[tileName(PLAYER.sector, this.x, this.y)];
+        effects.lineTo(tile.x + SPRITE_WIDTH/2, tile.y + SPRITE_HEIGHT*3/4);
+    });
+    effects.stroke();
+
+    PLAYER.path = path;
+    PLAYER.status = Motion.FOLLOWING_PATH;
+    positionPlayer();
 };
 
 var canMoveTo = function(x, y) {
@@ -373,6 +474,12 @@ var iso2cartY = function (x, y, z) {
     return ((SECTOR_COLS - x) * -ISO_TILE_HEIGHT) + (y * ISO_TILE_HEIGHT);
 }
 
+var isInsideIsoBox = function(clickX, clickY, boxX, boxY, isoWidth, isoHeight) {
+    var x = clickX - (boxX + isoWidth / 2);
+    var y = clickY - (boxY + isoHeight / 2);
+    return (Math.abs(x) <= (64 - 2 * Math.abs(y)));
+}
+
 /*
  *Generate a unique CSS ID for a tile in a given sector
  */
@@ -392,11 +499,11 @@ var isoDepth = function(x, y) {
 }
 
 /*
- *Check if the given key is in WASD or arrow keys
+ *Check if the given key is in arrow keys
  */
 var isMovementKey = function(key) {
     var found = false;
-    [87, 38, 65, 37, 83, 40, 68, 39].forEach(function(knownKey) {
+    [38, 37, 40, 39].forEach(function(knownKey) {
         if(key == knownKey) {
             found = true;
         }
